@@ -12,7 +12,7 @@ function(par, fn, control=list(), ...) {
     maximize <- ctrl$maximize
     trace <- ctrl$trace
 
-	if (maximize) fnm <- function(x, ...) -fn(x, ...) else fnm <- function(x, ...) fn(x, ...) 
+	if (maximize) fnm <- function(par, ...) -fn(par, ...) else fnm <- function(par, ...) fn(par, ...) 
 
 	x0 <- par
 	n <- length(par)

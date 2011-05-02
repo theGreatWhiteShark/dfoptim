@@ -1,0 +1,5 @@
+           Changes in "dfoptim" version 2011.5-1
+  
+  o Fixed minor bug in the re-definition of objective function inside for maximization
+
+
