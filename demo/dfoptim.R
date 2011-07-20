@@ -13,6 +13,8 @@ p.0 <- rnorm(np)
 xm1 <- nmk(fn=rosbkext, par=p.0) # maximum `fevals' is not sufficient to find correct minimum
 xm2 <- nmk(fn=rosbkext, par=p.0, control=list(maxfeval=5000)) # finds the correct minimum 
 ans.optim <- optim(fn=rosbkext, par=p.0, method="Nelder-Mead", control=list(maxit=5000))   # terminates with inferior estimates
+ans.hj <- hjk(fn=rosbkext, par=p.0)   # Hooke-Jeeves algorithm
+
 #######################################################################################################
 ### A non-smooth problem
 nsf <- function(x) {
@@ -24,6 +26,7 @@ nsf <- function(x) {
 
 p0 <- rnorm(3)
 xm3 <- nmk(fn=nsf, par=p0)
+xm3.hj <- hjk(fn=nsf, par=p0)
 
 #######################################################################################################
 ### Another non-smooth problem
@@ -39,6 +42,7 @@ rosen <- function(x) {
 
 p0 <- rnorm(4)
 xm4 <- nmk(fn=rosen, par=p0)
+xm4.hj <- hjk(fn=rosen, par=p0)
 
 #######################################################################################################
 ### Non-smooth problem #3
@@ -54,4 +58,5 @@ hald <- function(x) {
 
 p0 <- runif(5)
 xm5 <- nmk(fn=hald, par=p0)
+xm5.hj <- hjk(fn=hald, par=p0)
 

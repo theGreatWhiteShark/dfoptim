@@ -1,5 +1,17 @@
-           Changes in "dfoptim" version 2011.5-1
+------------------------------------------------------------------------------
+  dfoptim                                                               NEWS
+------------------------------------------------------------------------------
+
+
+Changes in "dfoptim" version 2011.7-1
+
+    o Hooke-Jeeves minimization routine hjk().
+
+Changes in "dfoptim" version 2011.5-1
   
-  o Fixed minor bug in the re-definition of objective function inside for maximization
+    o Fixed minor bug in the re-definition of objective function inside
+      for maximization.
 
+Initial version
 
+    o Nelder-Mead minimization routine nmk().

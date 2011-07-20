@@ -1,0 +1,9 @@
+##
+##  NAMESPACE
+##
+
+# Public routines
+export(nmk)
+export(hjk)
+
+# S4 Methods

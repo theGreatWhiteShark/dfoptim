@@ -22,11 +22,12 @@ More importantly, they can be used to solve non-smooth optimization problems.
 These algorithms were translated from the Matlab code of Prof. C.T. Kelley, given in his book "Iterative methods for optimization".
 However, there are some non-trivial modifications of the algorithm. \cr
 
-Currently, only the Nelder-Mead algorithm is implemented.  In future, more derivative-free algorithms will be added including Multi-directional search and Hookes-Jeeves.
+Currently, the Nelder-Mead and Hooke-Jeeves algorithms is implemented.  In future, more derivative-free algorithms may be added.
 }
 \author{
 Ravi Varadhan, Johns Hopkins University   \cr
 URL:  http://www.jhsph.edu/agingandhealth/People/Faculty_personal_pages/Varadhan.html  \cr
+Hans W. Borchers, ABB Corporate Research \cr
 Maintainer:  Ravi Varadhan <rvaradhan@jhmi.edu>
 }
 \references{
