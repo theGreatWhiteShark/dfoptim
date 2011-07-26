@@ -3,6 +3,10 @@
 ------------------------------------------------------------------------------
 
 
+Changes in "dfoptim" version 2011.7-2
+
+    o Box-constrained Nelder-Mead nmkb() has been added.
+
 Changes in "dfoptim" version 2011.7-1
 
     o Hooke-Jeeves minimization routine hjk().
