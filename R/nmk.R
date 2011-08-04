@@ -1,6 +1,6 @@
 nmk <-
 function(par, fn, control=list(), ...) {
-   ctrl <- list(tol=1.e-06, maxfeval = min(5000, max(1500, 20*length(par)^2)), regsimp=TRUE, maximize=FALSE, restarts.max=3, trace=FALSE)
+    ctrl <- list(tol=1.e-06, maxfeval = min(5000, max(1500, 20*length(par)^2)), regsimp=TRUE, maximize=FALSE, restarts.max=3, trace=FALSE)
 	namc <- match.arg(names(control), choices=names(ctrl), several.ok=TRUE)
     if (!all(namc %in% names(ctrl))) 
         stop("unknown names in control: ", namc[!(namc %in% names(ctrl))])

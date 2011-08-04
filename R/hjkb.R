@@ -3,17 +3,27 @@
 ##
 
 
-hjk <- function(par, fn, control = list(), ...) {
+hjkb <- function(par, fn, lower = -Inf, upper = Inf, control = list(), ...) {
     if (!is.numeric(par))
         stop("Argument 'par' must be a numeric vector.", call. = FALSE)
     n <- length(par)
     if (n == 1)
         stop("For univariate functions use some different method.", call. = FALSE)
+
+    if(!is.numeric(lower) || !is.numeric(upper))
+        stop("Lower and upper limits must be numeric.", call. = FALSE)
+    if (length(lower) == 1) lower <- rep(lower, n)
+    if (length(upper) == 1) upper <- rep(upper, n)
+    if (!all(lower <= upper))
+        stop("All lower limits must be smaller than upper limits.", call. = FALSE)
+    if (!all(lower <= par) || !all(par <= upper))
+        stop("Infeasible starting values -- check limits.", call. = FALSE)
+    
    
     #-- Control list handling ----------
     cntrl <- list(tol      = 1.e-06,
                   maxfeval = Inf,       # set to Inf if no limit wanted
-                  maximize = FALSE,     # set to TRUE  for maximization
+                  maximize = FALSE,     # set to TRUE for maximization
                   target   = Inf,       # set to Inf for no restriction
                   info     = FALSE)     # for printing interim information
     nmsCo <- match.arg(names(control), choices = names(cntrl), several.ok = TRUE)
@@ -44,7 +54,8 @@ hjk <- function(par, fn, control = list(), ...) {
     ns <- 0
     while (ns < nsteps && fcount < maxfeval && abs(fx) < target) {
         ns <- ns + 1
-        hjs    <- .hjsearch(x, f, steps[ns], dir, fcount, maxfeval, target)
+        hjs    <- .hjbsearch(x, f, lower, upper,
+                            steps[ns], dir, fcount, maxfeval, target)
         x      <- hjs$x
         fx     <- hjs$fx
         sf     <- hjs$sf
@@ -70,12 +81,12 @@ hjk <- function(par, fn, control = list(), ...) {
 }
 
 ##  Search with a single scale -----------------------------
-.hjsearch <- function(xb, f, h, dir, fcount, maxfeval, target) {
+.hjbsearch <- function(xb, f, lo, up, h, dir, fcount, maxfeval, target) {
     x  <- xb
     xc <- x
     sf <- 0
     finc <- 0
-    hje  <- .hjexplore(xb, xc, f, h, dir)
+    hje  <- .hjbexplore(xb, xc, f, lo, up, h, dir)
     x    <- hje$x
     fx   <- hje$fx
     sf   <- hje$sf
@@ -87,14 +98,14 @@ hjk <- function(par, fn, control = list(), ...) {
         xb <- x
         xc <- x+d
         fb <- fx
-        hje  <- .hjexplore(xb, xc, f, h, dir, fb)
+        hje  <- .hjbexplore(xb, xc, f, lo, up, h, dir, fb)
         x    <- hje$x
         fx   <- hje$fx
         sf   <- hje$sf
         finc <- finc + hje$numf
 
         if (sf == 0) {  # pattern move failed
-           hje  <- .hjexplore(xb, xb, f, h, dir, fb)
+           hje  <- .hjbexplore(xb, xb, f, lo, up, h, dir, fb)
            x    <- hje$x
            fx   <- hje$fx
            sf   <- hje$sf
@@ -107,7 +118,7 @@ hjk <- function(par, fn, control = list(), ...) {
 }
 
 ##  Exploratory move ---------------------------------------
-.hjexplore <- function(xb, xc, f, h, dir, fbold) {
+.hjbexplore <- function(xb, xc, f, lo, up, h, dir, fbold) {
     n <- length(xb)
     x <- xb
 
@@ -126,13 +137,19 @@ hjk <- function(par, fn, control = list(), ...) {
     fbold <- fx
     for (k in sample.int(n, n)) {       # resample orthogonal directions
         p <- xt + dirh[, k]
-        ft <- f(p)
-        numf <- numf + 1
+        if (all(p <= up)) {
+            ft <- f(p)
+            numf <- numf + 1
+        } else {
+            ft <- fb
+        }
 
         if (ft >= fb) {
             p <- xt - dirh[, k]
-            ft <- f(p)
-            numf <- numf + 1
+            if (all(p >= lo)) {
+                ft <- f(p)
+                numf <- numf + 1
+            }
         }
         if (ft < fb) {
             sf <- 1
@@ -144,5 +161,6 @@ hjk <- function(par, fn, control = list(), ...) {
         x <- xt
         fx <- fb
     }
+
     return(list(x = x, fx = fx, sf = sf, numf = numf))
 }

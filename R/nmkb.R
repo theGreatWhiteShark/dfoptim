@@ -1,9 +1,9 @@
 # Nelder-Mead with Box constraints
 nmkb <- function (par, fn, lower = -Inf, upper = Inf, control = list(), ...) 
 {
-    ctrl <- list(tol = 1e-06, maxfeval = min(5000, max(2500, 
+    ctrl <- list(tol = 1e-06, maxfeval = min(5000, max(1500, 
         20 * length(par)^2)), regsimp = TRUE, maximize = FALSE, 
-        restarts.max = 3, trace = FALSE, itrans=1)
+        restarts.max = 3, trace = FALSE)
     namc <- match.arg(names(control), choices = names(ctrl), 
         several.ok = TRUE)
     if (!all(namc %in% names(ctrl))) 
@@ -16,30 +16,19 @@ nmkb <- function (par, fn, lower = -Inf, upper = Inf, control = list(), ...)
     restarts.max <- ctrl$restarts.max
     maximize <- ctrl$maximize
     trace <- ctrl$trace
-    itrans <- ctrl$itrans
     n <- length(par)
 
 g <- function(x) {
-# maps from (a,b) to (-Inf, Inf)
 gx <- x
-gx[c1] <- switch(itrans, atanh(2 * (x[c1] - lower[c1]) / (upper[c1] - lower[c1]) - 1),
-tan(-pi/2 + pi * (x[c1] - lower[c1])/(upper[c1] - lower[c1])),
-log(x[c1] - lower[c1]) - log(upper[c1] - x[c1]),
-asinh(2/pi * atanh(2*(x[c1] - lower[c1])/(upper[c1] - lower[c1]) - 1))
-)
+gx[c1] <- atanh(2 * (x[c1] - lower[c1]) / (upper[c1] - lower[c1]) - 1)
 gx[c3] <- log(x[c3] - lower[c3])
 gx[c4] <- log(upper[c4] - x[c4])
 gx
 }
 
 ginv <- function(x) {
-# maps from (-Inf, Inf) to (a,b)
 gix <- x
-gix[c1] <- switch(itrans, lower[c1] + (upper[c1] - lower[c1])/2 * (1 + tanh(x[c1])), 
-lower[c1] + (upper[c1] - lower[c1])/pi * (atan(x[c1]) + pi/2),
-(lower[c1] + upper[c1] * exp(x[c1])) / (1 + exp(x[c1])),
-lower[c1] + (upper[c1] - lower[c1])/2 * (1 + (tanh(pi/2 * sinh(x[c1]))))
-)
+gix[c1] <- lower[c1] + (upper[c1] - lower[c1])/2 * (1 + tanh(x[c1]))
 gix[c3] <- lower[c3] + exp(x[c3])
 gix[c4] <- upper[c4] - exp(x[c4])
 gix
@@ -48,7 +37,7 @@ gix
 if (length(lower) == 1) lower <- rep(lower, n)
 if (length(upper) == 1) upper <- rep(upper, n)
 
-if (any(c(par <= lower, upper <= par))) stop("Infeasible starting values!", call.=FALSE)
+if (any(c(par < lower, upper < par))) stop("Infeasible starting values!", call.=FALSE)
 
 low.finite <- is.finite(lower)
 upp.finite <- is.finite(upper)
@@ -57,12 +46,12 @@ c2 <- !(low.finite | upp.finite) # both lower and upper bounds are infinite
 c3 <- !(c1 | c2) & low.finite # finite lower bound, but infinite upper bound
 c4 <- !(c1 | c2) & upp.finite  # finite upper bound, but infinite lower bound
 
-if (all(c2)) warning("Use `nmk()' for unconstrained optimization since it is slightly faster.", call.=FALSE)
+if (all(c2)) stop("Use `nmk()' for unconstrained optimization!", call.=FALSE)
 
     if (maximize) 
         fnmb <- function(par) -fn(ginv(par), ...)
     else fnmb <- function(par) fn(ginv(par), ...)
-
+    
     x0 <- g(par)
     if (n == 1) 
         stop(call. = FALSE, "Use `optimize' for univariate optimization")
@@ -223,5 +212,5 @@ if (all(c2)) warning("Use `nmk()' for unconstrained optimization since it is sli
         message <- "Stagnation in Nelder-Mead"
     }
     return(list(par = ginv(V[, 1]), value = f[1] * (-1)^maximize, feval = nf, 
-        restarts = restarts, convergence = conv, message = message, itrans=itrans))
-} 
+        restarts = restarts, convergence = conv, message = message))
+}

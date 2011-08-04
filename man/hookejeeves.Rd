@@ -1,20 +1,30 @@
 \name{hjk}
 \alias{hjk}
+\alias{hjkb}
 \title{
   Hooke-Jeeves derivative-free minimization algorithm
 }
 \description{
   An implementation of the Hooke-Jeeves algorithm for derivative-free
-  optimization.  
+  optimization.  A bounded and an unbounded version are provided.
 }
 \usage{
 hjk(par, fn, control = list(), ...)
+
+hjkb(par, fn, lower = -Inf, upper = Inf, control = list(), ...)
 }
 \arguments{
-  \item{par}{Starting vector of parameter values.}
+  \item{par}{Starting vector of parameter values.    The initial vector may lie on the boundary. If \code{lower[i]=upper[i]}
+  for some \code{i}, the \code{i}-th component of the solution vector will
+  simply be kept fixed.}
   \item{fn}{Nonlinear objective function that is to be optimized. 
             A scalar function that takes a real vector as argument and 
             returns a scalar that is the value of the function at that point.}
+  \item{lower, upper}{Lower and upper bounds on the parameters.
+                      A vector of the same length as the parameters.
+                      If a single value is specified, it is assumed that the 
+                      same bound applies to all parameters. The
+                      starting parameter values must lie within the bounds.}
   \item{control}{A list of control parameters.
                  See \bold{Details} for more information.}
   \item{\dots}{Additional arguments passed to \code{fn}.}
@@ -34,11 +44,11 @@ hjk(par, fn, control = list(), ...)
   \item{\code{maxfeval}}{Maximum number of objective function evaluations 
   allowed. Default is Inf, that is no restriction at all.}
 
-  \item{\code{maximize}}{A logical indicating whether the objective function is to be maximized (TRUE) or minimized (FALSE).
-  Default is FALSE.}
+  \item{\code{maximize}}{A logical indicating whether the objective function 
+  is to be maximized (TRUE) or minimized (FALSE). Default is FALSE.}
 
   \item{\code{target}}{A real number restricting the absolute function value. 
-  The procedure stopsif this value is exceeded.
+  The procedure stops if this value is exceeded.
   Default is Inf, that is no restriction.}
 
   \item{\code{info}}{A logical variable indicating whether the step number, 
@@ -77,7 +87,7 @@ hjk(par, fn, control = list(), ...)
   that have already been computed as searching the cache makes it slower.
 }
 \seealso{
-  \code{\link{nmk}}
+  \code{\link{optim}}, \code{\link{nmk}}
 }
 \examples{
 ##  Hooke-Jeeves solves high-dim. Rosenbrock function
@@ -87,6 +97,11 @@ hjk(par, fn, control = list(), ...)
   }
 par0 <- rep(0, 10)
 hjk(par0, rosenbrock)
+
+hjkb(c(0, 0, 0), rosenbrock, upper = 0.5)
+# $par
+# [1] 0.50000000 0.25742722 0.06626892
+
 
 ##  Hooke-Jeeves does not work well on non-smooth functions
   nsf <- function(x) {

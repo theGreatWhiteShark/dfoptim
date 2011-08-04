@@ -6,14 +6,14 @@ Derivative-free Optimization
 }
 \description{
 Derivative-Free optimization algorithms. These algorithms do not require gradient information.  
-More importantly, they can be used to solve non-smooth optimization problems. 
+More importantly, they can be used to solve non-smooth optimization problems. They can also handle box constraints on parameters.
 }
 \details{
 \tabular{ll}{
 Package: \tab dfoptim\cr
 Type: \tab Package\cr
 Version: \tab 2011\cr
-Date: \tab 2011-02-05\cr
+Date: \tab 2011-08-12\cr
 License: \tab GPL-2 or greater\cr
 LazyLoad: \tab yes\cr
 }
