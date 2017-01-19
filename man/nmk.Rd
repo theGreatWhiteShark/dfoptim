@@ -4,8 +4,8 @@
 \alias{nmk}
 \title{dfoptim::nmk which outputs the parameter vector of every optimization step}
 \usage{
-nmk(par = likelihood.initials(x), fn = likelihood, x, MODIFIED = TRUE,
-  control = list(), ...)
+nmk(par = climex::likelihood.initials(x), fn = climex::likelihood, x,
+  MODIFIED = TRUE, WARNINGS = FALSE, control = list(), ...)
 }
 \arguments{
 \item{par}{Initial parameter set. Default = call of the \code{\link{likelihood.initials}} function with the time.series as argument}
@@ -15,6 +15,8 @@ nmk(par = likelihood.initials(x), fn = likelihood, x, MODIFIED = TRUE,
 \item{x}{Time series of class 'xts' or 'numeric'.}
 
 \item{MODIFIED}{Flag specifying if the modified or the original algorithm should be used. Default = TRUE.}
+
+\item{WARNINGS}{Flag if warnings should be displayed or not. Default = FALSE.}
 
 \item{control}{List of options.}
 

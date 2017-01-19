@@ -6,6 +6,7 @@
 ##' @param fn Function which is about to optimize. Default = \code{\link{likelihood}}
 ##' @param x Time series of class 'xts' or 'numeric'.
 ##' @param MODIFIED Flag specifying if the modified or the original algorithm should be used. Default = TRUE.
+##' @param WARNINGS Flag if warnings should be displayed or not. Default = FALSE.
 ##' @param control List of options.
 ##' @param ... Additional input for the function 'fn'. In case of the likelihood function the time series 'x' must be provided
 ##'
@@ -14,7 +15,8 @@
 ##' @export
 ##' @examples
 ##' nmk( x = block( anomalies( temp.potsdam ) ) )
-nmk <- function ( par = likelihood.initials( x ), fn = likelihood, x, MODIFIED = TRUE, control = list(), ...) 
+nmk <- function ( par = climex::likelihood.initials( x ), fn = climex::likelihood, x, MODIFIED = TRUE,
+                 WARNINGS = FALSE, control = list(), ...) 
 {
     ## Initialization
     ctrl <- list( tol = 1e-06, maxfeval = min( 5000, max( 1500, 20 * length( par )^2 ) ),
@@ -42,13 +44,13 @@ nmk <- function ( par = likelihood.initials( x ), fn = likelihood, x, MODIFIED =
     n <- length( par )
     if ( n == 1 ) 
         stop( call. = FALSE, "Use `optimize' for univariate optimization" )
-    if ( n > 30 ) 
+    if ( n > 30 && WARNINGS ) 
         warning( "Nelder-Mead should not be used for high-dimensional optimization" )
     V <- cbind( rep( 0, n ), diag( n ) ) # matrix containing the n+1 vertices of the simplex
     f <- rep( 0, n + 1 ) # contains function evaluations
     ## MOD
     f[ 1 ] <- fnm( x0, x )
-    if ( is.nan( f[ 1 ] ) )
+    if ( is.nan( f[ 1 ] ) && WARNINGS )
         warning( "The supplied initial parameter set to nmk.modified can not be evaluated!" )
     nf <- 0
     restarts <- 0
@@ -163,7 +165,10 @@ nmk <- function ( par = likelihood.initials( x ), fn = likelihood, x, MODIFIED =
                 ( 1 + y )* xbar - y* V[ , n + 1 ] } )
             rho.results <- lapply( x.sequence, function( y ) fnm( y, x ) )
             if ( all( is.nan( as.numeric( rho.results ) ) ) ){
-                warning( "no allowed points in the reflection step in nmk.modified" )
+                if ( WARNINGS ){
+                    browser()
+                    warning( "no allowed points in the reflection step in nmk.modified" )
+                }
                 ## Well maybe the other methods are of more luck
                 xe <- ( 1 + rho* chi )* xbar - rho* chi* V[ , n + 1 ]
                 xco <- ( 1 + rho* gamma )* xbar - rho* gamma* V [ , n + 1 ]
@@ -171,7 +176,8 @@ nmk <- function ( par = likelihood.initials( x ), fn = likelihood, x, MODIFIED =
                 other.results <- as.numeric( lapply( list( xe, xco, xci ),
                                                      function( y ) fnm( y, x ) ) )
                 if ( all( is.nan( other.results ) ) && is.null( xnew ) ){
-                    warning( "All other steps couldn't produce a valid step either. The provided starting point!" )
+                    if ( WARNINGS )
+                        warning( "All other steps couldn't produce a valid step either. The provided starting point!" )
                     ## So especially for the parameter region of the shape where the likelihood isn't even defined it makes no sense to force the algorithm to work. Sometimes one has to let things go.
                     fr <- xr <- NaN
                 } else {
