@@ -50,9 +50,9 @@ nmk <- function ( par = climex::likelihood.initials( x, model = model ),
   trace <- ctrl$trace
   ## MOD
   if ( maximize ) {
-    fnm <- function( par, x ) -fn( par, x )
+    fnm <- function( par, x ) -fn( par, x, model = model )
   } else
-    fnm <- function( par, x ) fn( par, x )
+    fnm <- function( par, x ) fn( par, x, model = model )
   ## /MOD
 
   ## Starting values
