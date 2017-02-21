@@ -159,7 +159,12 @@ nmk <- function ( par = climex::likelihood.initials( x, model = model ),
   itc <- 0
   conv <- 0
   ## MOD (but even beforehand)
-  x.new.vector <- data.frame( location = x0[ 1 ], scale = x0[ 2 ], shape = x0[ 3 ], step = 1 )
+  if ( model == "gev" ){
+    x.new.vector <- data.frame( location = x0[ 1 ], scale = x0[ 2 ],
+                               shape = x0[ 3 ], step = 1 )
+  } else {
+    x.new.vector <- data.frame( scale = x0[ 1 ], shape = x[ 2 ], step = 1 )
+  }
   xnew <- NULL # to check later on if it was already modified
   ## /MOD
   message <- "Run into error"
