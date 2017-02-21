@@ -2,31 +2,44 @@
 % Please edit documentation in R/nmk.R
 \name{nmk}
 \alias{nmk}
-\title{dfoptim::nmk which outputs the parameter vector of every optimization step}
+\title{dfoptim::nmk which outputs the parameter vector of every optimization
+step}
 \usage{
-nmk(par = climex::likelihood.initials(x), fn = climex::likelihood, x,
-  MODIFIED = TRUE, WARNINGS = FALSE, control = list(), ...)
+nmk(par = climex::likelihood.initials(x, model = model),
+  fn = climex::likelihood, x, model = c("gev", "gpd"), MODIFIED = TRUE,
+  WARNINGS = FALSE, control = list(), ...)
 }
 \arguments{
-\item{par}{Initial parameter set. Default = call of the \code{\link{likelihood.initials}} function with the time.series as argument}
+\item{par}{Initial parameter set. Default = call of the
+\code{\link{likelihood.initials}} function with the time.series as argument}
 
 \item{fn}{Function which is about to optimize. Default = \code{\link{likelihood}}}
 
 \item{x}{Time series of class 'xts' or 'numeric'.}
 
-\item{MODIFIED}{Flag specifying if the modified or the original algorithm should be used. Default = TRUE.}
+\item{model}{Determines if to use the GEV or GP distribution. Default = "gev".}
+
+\item{MODIFIED}{Flag specifying if the modified or the original algorithm
+should be used. Default = TRUE.}
 
 \item{WARNINGS}{Flag if warnings should be displayed or not. Default = FALSE.}
 
 \item{control}{List of options.}
 
-\item{...}{Additional input for the function 'fn'. In case of the likelihood function the time series 'x' must be provided}
+\item{...}{Additional input for the function 'fn'. In case of the likelihood
+function the time series 'x' must be provided}
 }
 \value{
-List of elements see original function. In addition a new element called x.updates is provided containing the parameters at each optimization step. Of class c( "list", "climex.gev.fit" )
+List of elements see original function. In addition a new element
+called x.updates is provided containing the parameters at each optimization
+step. Of class c( "list", "climex.gev.fit" )
 }
 \details{
-See \code{\link{dfoptim::nmk}}. This version incorporates a modified step for avoiding the forbidden region. Its activated by setting MODIFIED to TRUE. Since its always about the likelihood function its x argument also will be provided explicitly (much nicer for debugging; modified regions indicated by MOD)
+See \code{\link{dfoptim::nmk}}. This version incorporates a modified
+step for avoiding the forbidden region. Its activated by setting MODIFIED to
+TRUE. Since its always about the likelihood function its x argument also will
+be provided explicitly (much nicer for debugging; modified regions indicated by
+MOD)
 }
 \examples{
 nmk( x = block( anomalies( temp.potsdam ) ) )
