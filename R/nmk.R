@@ -1,27 +1,37 @@
-##' @title dfoptim::nmk which outputs the parameter vector of every optimization
-##' step
+##' @title dfoptim::nmk which outputs the parameter vector of every
+##'   optimization step
 ##'
-##' @details See \code{\link{dfoptim::nmk}}. This version incorporates a modified
-##' step for avoiding the forbidden region. Its activated by setting MODIFIED to
-##' TRUE. Since its always about the likelihood function its x argument also will
-##' be provided explicitly (much nicer for debugging; modified regions indicated by
-##' MOD)
+##' @details See \code{\link{dfoptim::nmk}}. This version incorporates
+##'   a modified step for avoiding the forbidden region. Its activated
+##'   by setting MODIFIED to TRUE. Since its always about the
+##'   likelihood function its x argument also will be provided
+##'   explicitly (much nicer for debugging; modified regions indicated
+##'   by MOD)
 ##'
 ##' @param par Initial parameter set. Default = call of the
-##' \code{\link{likelihood.initials}} function with the time.series as argument
-##' @param fn Function which is about to optimize. Default = \code{\link{likelihood}}
+##'   \code{\link{likelihood.initials}} function with the time.series
+##'   as argument
+##' @param fn Function which is about to optimize. Default =
+##'   \code{\link{likelihood}} 
 ##' @param x Time series of class 'xts' or 'numeric'.
-##' @param model Determines if to use the GEV or GP distribution. Default = "gev".
-##' @param MODIFIED Flag specifying if the modified or the original algorithm
-##' should be used. Default = TRUE.
-##' @param WARNINGS Flag if warnings should be displayed or not. Default = FALSE.
+##' @param model Determines if to use the GEV or GP
+##'   distribution. Default = "gev". 
+##' @param MODIFIED Flag specifying if the modified or the original
+##'   algorithm should be used. Default = TRUE.
+##' @param WARNINGS Flag if warnings should be displayed or
+##'   not. Default = FALSE. 
 ##' @param control List of options.
-##' @param ... Additional input for the function 'fn'. In case of the likelihood
-##' function the time series 'x' must be provided
+##' @param ... Additional input for the function 'fn'. In case of the
+##'   likelihood function the time series 'x' must be provided
 ##'
-##' @return List of elements see original function. In addition a new element
-##' called x.updates is provided containing the parameters at each optimization
-##' step. Of class c( "list", "climex.gev.fit" )
+##' @return List of elements see original function. In addition two
+##'   new elements called \emph{x.updates} and \emph{simplex.final}
+##'   are provided. The first one contains the parameters at each
+##'   optimization step. The latter one contains the a n x
+##'   (n+1)-dimensional matrix containing all the coordinates of the
+##'   vertices of the final simplex.
+##'
+##'   Of class c( "list", "climex.gev.fit" )
 ##' @author Philipp Mueller
 ##' @export
 ##' @examples
@@ -346,9 +356,10 @@ nmk <- function ( par = climex::likelihood.initials( x, model = model ),
     message <- "Stagnation in Nelder-Mead"
   }
 
-  res <- list( par = V[ , 1 ], value = f[ 1 ]* ( -1 )^maximize, feval = nf, 
-              restarts = restarts, convergence = conv, message = message,
-              x.updates = x.new.vector )
+  res <- list( par = V[ , 1 ], value = f[ 1 ]* ( -1 )^maximize,
+              feval = nf, restarts = restarts, convergence = conv,
+              message = message, x.updates = x.new.vector,
+              simplex.final = V )
   class( res ) <- c( "list", "climex.gev.fit" )
   return( res )        
 }
